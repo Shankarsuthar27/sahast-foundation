@@ -36,27 +36,39 @@ function parseLocation() {
 
   // Admin / Login Panel view
   if (
-    hash === '#admin' ||
+    hash.startsWith('#admin') ||
+    hash.startsWith('#portal') ||
     hash === '#admin-panel' ||
+    hash === '#cms' ||
+    hash === '#dashboard' ||
+    hash === '#manage' ||
     hash === '#wp-admin' ||
     hash === '#login' ||
     hash === '#wp-login' ||
     hash === '#wp-login.php' ||
     path === '/admin' ||
+    path === '/portal' ||
+    path === '/admin-panel' ||
+    path === '/cms' ||
+    path === '/dashboard' ||
+    path === '/manage' ||
     path === '/wp-admin' ||
     path === '/login' ||
     path === '/wp-login' ||
     path === '/wp-login.php' ||
-    path === '/admin-panel' ||
-    path === '/cms' ||
     path.startsWith('/admin/') ||
+    path.startsWith('/portal/') ||
+    path.startsWith('/admin-panel/') ||
+    path.startsWith('/cms/') ||
+    path.startsWith('/dashboard/') ||
     path.startsWith('/wp-admin/')
   ) {
     let subRoute = 'dashboard';
-    if (path.includes('/homepage')) subRoute = 'homepage';
-    else if (path.includes('/news')) subRoute = 'news';
-    else if (path.includes('/events') || path.includes('/event')) subRoute = 'events';
-    else if (path.includes('/gallery')) subRoute = 'gallery';
+    const checkTarget = `${path} ${hash}`;
+    if (checkTarget.includes('homepage')) subRoute = 'homepage';
+    else if (checkTarget.includes('news')) subRoute = 'news';
+    else if (checkTarget.includes('events') || checkTarget.includes('event')) subRoute = 'events';
+    else if (checkTarget.includes('gallery')) subRoute = 'gallery';
 
     return { view: 'admin', hash: '', subRoute };
   }
@@ -222,8 +234,17 @@ export default function App() {
         window.scrollTo({ top: 0, behavior: 'smooth' });
       } else if (view === 'admin') {
         const targetSub = subRoute || 'dashboard';
-        const targetPath = `/admin/${targetSub}`;
-        if (path !== targetPath && path !== '/admin' && path !== '/wp-admin') {
+        let base = '/admin';
+        if (path.startsWith('/portal')) base = '/portal';
+        else if (path.startsWith('/admin-panel')) base = '/admin-panel';
+        else if (path.startsWith('/cms')) base = '/cms';
+        else if (rawHash.startsWith('#admin') || rawHash.startsWith('#portal')) {
+          // Keep hash intact without rewriting to /admin/
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+          return;
+        }
+        const targetPath = `${base}/${targetSub}`;
+        if (path !== targetPath && !path.startsWith(base)) {
           window.history.replaceState({ view: 'admin', subRoute: targetSub }, '', targetPath);
         }
         window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -265,10 +286,19 @@ export default function App() {
     } else if (view === 'blog-seva' || view === 'the-power-of-seva') {
       window.history.pushState({ view: 'blog-seva' }, '', '/the-power-of-seva');
       window.scrollTo({ top: 0, behavior: 'smooth' });
-    } else if (view === 'admin' || view === 'admin-panel' || view === 'cms') {
+    } else if (['admin', 'admin-panel', 'cms', 'portal'].includes(view)) {
       const sub = targetSubRoute || 'dashboard';
       setAdminSubRoute(sub);
-      window.history.pushState({ view: 'admin', subRoute: sub }, '', `/admin/${sub}`);
+      let base = '/admin';
+      if (window.location.pathname.startsWith('/portal')) base = '/portal';
+      else if (window.location.pathname.startsWith('/admin-panel')) base = '/admin-panel';
+      else if (window.location.pathname.startsWith('/cms')) base = '/cms';
+      else if (window.location.hash.startsWith('#admin') || window.location.hash.startsWith('#portal')) {
+        window.history.pushState({ view: 'admin', subRoute: sub }, '', `/#admin/${sub}`);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        return;
+      }
+      window.history.pushState({ view: 'admin', subRoute: sub }, '', `${base}/${sub}`);
       window.scrollTo({ top: 0, behavior: 'smooth' });
     } else {
       // Home view

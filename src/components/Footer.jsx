@@ -436,7 +436,7 @@ export default function Footer({ onNavigate }) {
           <span>{footerData.copyrightText || 'Copyright © 2026, Sahast Foundation All Rights Reserved.'}</span>
           <span style={{ opacity: 0.4 }}>•</span>
           <a
-            href="/admin"
+            href="/portal"
             onClick={(e) => {
               e.preventDefault();
               if (onNavigate) onNavigate('admin');

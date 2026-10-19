@@ -1,28 +1,4 @@
 {
-  "$schema": "https://openapi.vercel.sh/vercel.json",
-  "cleanUrls": true,
-  "redirects": [
-    {
-      "source": "/wp-admin",
-      "destination": "/admin",
-      "permanent": false
-    },
-    {
-      "source": "/wp-admin/:match*",
-      "destination": "/admin/:match*",
-      "permanent": false
-    },
-    {
-      "source": "/wp-login",
-      "destination": "/admin",
-      "permanent": false
-    },
-    {
-      "source": "/wp-login.php",
-      "destination": "/admin",
-      "permanent": false
-    }
-  ],
   "rewrites": [
     {
       "source": "/(.*)",

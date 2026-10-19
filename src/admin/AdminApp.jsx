@@ -34,8 +34,18 @@ export default function AdminApp({ onNavigateHome, subRoute }) {
   // Update browser URL and state
   const handleNavigateSubRoute = (subRouteId) => {
     setActiveSubRoute(subRouteId);
-    const targetPath = `/admin/${subRouteId}`;
-    if (window.location.pathname !== targetPath) {
+    const path = window.location.pathname.toLowerCase();
+    const hash = window.location.hash.toLowerCase();
+
+    let targetPath = `/admin/${subRouteId}`;
+    if (path.startsWith('/portal')) targetPath = `/portal/${subRouteId}`;
+    else if (path.startsWith('/admin-panel')) targetPath = `/admin-panel/${subRouteId}`;
+    else if (path.startsWith('/cms')) targetPath = `/cms/${subRouteId}`;
+    else if (hash.startsWith('#admin') || hash.startsWith('#portal')) {
+      targetPath = `/#admin/${subRouteId}`;
+    }
+
+    if (window.location.pathname !== targetPath && window.location.hash !== targetPath) {
       window.history.pushState({ view: 'admin', subRoute: subRouteId }, '', targetPath);
     }
     window.scrollTo({ top: 0, behavior: 'smooth' });
