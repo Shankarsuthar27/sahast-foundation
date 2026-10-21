@@ -4,8 +4,8 @@ import { useAdminAuth } from '../../context/AdminAuthContext';
 
 export default function AdminLogin({ onLoginSuccess, onCancel }) {
   const { login } = useAdminAuth();
-  const [username, setUsername] = useState('admin2233');
-  const [password, setPassword] = useState('admin@2233');
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
   const [loading, setLoading] = useState(false);
