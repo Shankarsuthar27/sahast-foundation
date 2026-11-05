@@ -14,7 +14,8 @@ import {
   Plus,
   Save,
   Check,
-  Star
+  Star,
+  Loader2
 } from 'lucide-react';
 import { useCms } from '../../../context/CmsContext';
 import { uploadImageToStorage } from '../../../firebase/services';
@@ -28,6 +29,8 @@ export default function GalleryManager() {
   const [lightboxImage, setLightboxImage] = useState(null);
   const [editingPhoto, setEditingPhoto] = useState(null);
   const [deleteConfirmId, setDeleteConfirmId] = useState(null);
+  const [deleteConfirmPhoto, setDeleteConfirmPhoto] = useState(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   // Bulk Upload states
   const [isDropActive, setIsDropActive] = useState(false);
@@ -111,9 +114,18 @@ export default function GalleryManager() {
     }
   };
 
-  const handleDelete = async (id) => {
-    await deleteGalleryPhoto(id);
-    setDeleteConfirmId(null);
+  const handleDelete = async (photoOrId) => {
+    if (!photoOrId) return;
+    setIsDeleting(true);
+    try {
+      await deleteGalleryPhoto(photoOrId);
+    } catch (err) {
+      console.error('Delete photo error:', err);
+    } finally {
+      setIsDeleting(false);
+      setDeleteConfirmPhoto(null);
+      setDeleteConfirmId(null);
+    }
   };
 
   const handleSaveEdit = async (e) => {
@@ -318,9 +330,10 @@ export default function GalleryManager() {
                     type="button"
                     onClick={(e) => {
                       e.stopPropagation();
-                      setDeleteConfirmId(photo.id);
+                      setDeleteConfirmPhoto(photo);
+                      setDeleteConfirmId(photo.id || photo);
                     }}
-                    className="p-2 rounded-xl bg-white text-slate-800 hover:bg-red-50 hover:text-red-600 shadow-md transition-colors"
+                    className="p-2 rounded-xl bg-white text-slate-800 hover:bg-red-50 hover:text-red-600 shadow-md transition-colors cursor-pointer"
                     title="Delete Photo"
                   >
                     <Trash2 size={16} />
@@ -421,30 +434,74 @@ export default function GalleryManager() {
       )}
 
       {/* Delete Confirmation Modal */}
-      {deleteConfirmId && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs">
-          <div className="bg-white rounded-3xl p-6 max-w-sm w-full shadow-2xl border border-slate-100 text-center space-y-4">
+      {(deleteConfirmPhoto || deleteConfirmId) && (
+        <div
+          onClick={() => {
+            if (!isDeleting) {
+              setDeleteConfirmPhoto(null);
+              setDeleteConfirmId(null);
+            }
+          }}
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs cursor-pointer"
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            className="bg-white rounded-3xl p-6 max-w-sm w-full shadow-2xl border border-slate-100 text-center space-y-4 cursor-default"
+          >
             <div className="w-12 h-12 bg-red-100 text-red-600 rounded-2xl flex items-center justify-center mx-auto">
               <AlertCircle size={24} />
             </div>
-            <h3 className="text-base font-bold text-slate-900">Delete Photo?</h3>
-            <p className="text-xs text-slate-500">
-              Are you sure you want to permanently delete this photo from the darshan gallery?
-            </p>
+            <div>
+              <h3 className="text-base font-bold text-slate-900">Delete Photo?</h3>
+              <p className="text-xs text-slate-500 mt-1">
+                Are you sure you want to permanently delete{' '}
+                {deleteConfirmPhoto?.title ? (
+                  <span className="font-semibold text-slate-800">
+                    "{deleteConfirmPhoto.title}"
+                  </span>
+                ) : (
+                  'this photo'
+                )}{' '}
+                from the darshan gallery?
+              </p>
+            </div>
+
+            {deleteConfirmPhoto?.url && (
+              <div className="w-20 h-20 mx-auto rounded-xl overflow-hidden border border-slate-200 shadow-inner">
+                <img
+                  src={deleteConfirmPhoto.url}
+                  alt={deleteConfirmPhoto.title || 'Delete preview'}
+                  className="w-full h-full object-cover"
+                />
+              </div>
+            )}
+
             <div className="flex items-center justify-center gap-3 pt-2">
               <button
                 type="button"
-                onClick={() => setDeleteConfirmId(null)}
-                className="px-4 py-2 text-xs font-bold text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-xl"
+                disabled={isDeleting}
+                onClick={() => {
+                  setDeleteConfirmPhoto(null);
+                  setDeleteConfirmId(null);
+                }}
+                className="px-4 py-2 text-xs font-bold text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-xl cursor-pointer disabled:opacity-50 transition-colors"
               >
                 Cancel
               </button>
               <button
                 type="button"
-                onClick={() => handleDelete(deleteConfirmId)}
-                className="px-4 py-2 text-xs font-bold text-white bg-red-600 hover:bg-red-700 rounded-xl shadow-md"
+                disabled={isDeleting}
+                onClick={() => handleDelete(deleteConfirmPhoto || deleteConfirmId)}
+                className="px-4 py-2 text-xs font-bold text-white bg-red-600 hover:bg-red-700 rounded-xl shadow-md cursor-pointer flex items-center justify-center gap-1.5 disabled:opacity-75 transition-all min-w-[110px]"
               >
-                Delete Photo
+                {isDeleting ? (
+                  <>
+                    <Loader2 size={13} className="animate-spin" />
+                    <span>Deleting...</span>
+                  </>
+                ) : (
+                  <span>Delete Photo</span>
+                )}
               </button>
             </div>
           </div>

@@ -263,12 +263,26 @@ export function CmsProvider({ children }) {
     }
   };
 
-  const deleteGalleryPhoto = async (id) => {
+  const deleteGalleryPhoto = async (idOrPhoto) => {
+    const id = typeof idOrPhoto === 'object' ? idOrPhoto?.id : idOrPhoto;
+    const url = typeof idOrPhoto === 'object' ? idOrPhoto?.url : null;
+
+    // Optimistic UI update: remove immediately from state so the card vanishes with zero delay
+    setGalleryList((prev) =>
+      prev.filter((item) => {
+        if (id && (item.id === id || String(item.id) === String(id))) return false;
+        if (url && item.url === url) return false;
+        return true;
+      })
+    );
+
     setIsSaving(true);
     try {
-      await deleteCollectionItem('gallery', id);
-      setGalleryList((prev) => prev.filter((item) => item.id !== id));
+      await deleteCollectionItem('gallery', id, url);
       refreshActivity();
+      return true;
+    } catch (err) {
+      console.warn('Gallery delete failed in cloud storage, kept local deletion:', err);
       return true;
     } finally {
       setIsSaving(false);

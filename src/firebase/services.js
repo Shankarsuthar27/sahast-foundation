@@ -403,21 +403,34 @@ export async function updateCollectionItem(colName, itemId, itemData) {
   return updated.find((i) => i.id === itemId);
 }
 
-export async function deleteCollectionItem(colName, itemId) {
+export async function deleteCollectionItem(colName, itemId, itemUrl = null) {
   const storageKey = STORAGE_KEYS[colName] || `shreeabhaydas_cms_${colName}`;
   const current = getLocalItem(storageKey, getCollectionDefaultSeed(colName));
-  const target = current.find((i) => i.id === itemId);
+  const target = current.find((i) =>
+    (itemId && (i.id === itemId || String(i.id) === String(itemId))) ||
+    (itemUrl && i.url === itemUrl)
+  );
 
-  const updated = current.filter((item) => item.id !== itemId);
+  const updated = current.filter((item) => {
+    if (itemId && (item.id === itemId || String(item.id) === String(itemId))) return false;
+    if (itemUrl && item.url === itemUrl) return false;
+    return true;
+  });
+
   setLocalItem(storageKey, updated);
-  logActivity(`Deleted from ${colName}`, target?.title || `Item ${itemId} deleted`, colName);
+  logActivity(`Deleted from ${colName}`, target?.title || `Item ${itemId || ''} deleted`, colName);
 
-  if (isFirebaseConfigured && db) {
+  const targetDocId = itemId || target?.id;
+  if (isFirebaseConfigured && db && targetDocId) {
     try {
-      const docRef = doc(db, colName, itemId);
-      await deleteDoc(docRef);
+      const docRef = doc(db, colName, String(targetDocId));
+      // Guard with timeout so slow network or offline queue doesn't hang UI
+      await Promise.race([
+        deleteDoc(docRef),
+        new Promise((_, reject) => setTimeout(() => reject(new Error('Firestore operation timed out')), 2500))
+      ]);
     } catch (err) {
-      console.error(`Firestore delete failed on ${colName}/${itemId}:`, err);
+      console.warn(`Firestore delete on ${colName}/${targetDocId}:`, err?.message || err);
     }
   }
 
