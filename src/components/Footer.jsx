@@ -61,7 +61,8 @@ export default function Footer({ onNavigate }) {
 
             <form
               onSubmit={handleSubscribe}
-              style={{
+              className="newsletter-form"
+            style={{
                 maxWidth: '520px',
                 margin: '0 auto',
                 display: 'flex',
@@ -123,9 +124,10 @@ export default function Footer({ onNavigate }) {
 
           {/* 2. Four Column Footer Layout */}
           <div
+            className="footer-cols-grid"
             style={{
               display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
               gap: '40px',
               alignItems: 'start'
             }}

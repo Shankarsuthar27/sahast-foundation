@@ -19,7 +19,7 @@ export default function ServingHumanity({ onOpenDonate, onNavigateAbout }) {
         <div 
           style={{
             display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
             gap: '40px',
             alignItems: 'center'
           }}
@@ -157,21 +157,6 @@ export default function ServingHumanity({ onOpenDonate, onNavigateAbout }) {
                 }} 
               />
             </div>
-
-            {/* Right Ribbon Indicator from Screenshot */}
-            <div 
-              style={{
-                position: 'absolute',
-                right: '-12px',
-                top: '50%',
-                transform: 'translateY(-50%)',
-                width: '14px',
-                height: '38px',
-                backgroundColor: '#e31937',
-                borderRadius: '4px 0 0 4px',
-                boxShadow: '0 2px 8px rgba(227, 25, 55, 0.5)'
-              }}
-            />
           </div>
 
         </div>

@@ -310,20 +310,20 @@ export default function GurukulCarousel({ onOpenLightbox }) {
 
         @media (max-width: 768px) {
           .gurukul-showcase-section {
-            padding: 70px 10px;
+            padding: 50px 10px;
           }
 
           .gs-heading h2 {
-            font-size: 32px;
+            font-size: 28px;
           }
 
           .gs-slider {
-            height: 260px;
+            height: 250px;
           }
 
           .gs-card {
-            width: 300px;
-            height: 190px;
+            width: 280px;
+            height: 180px;
             border-radius: 16px;
           }
 
@@ -341,11 +341,11 @@ export default function GurukulCarousel({ onOpenLightbox }) {
           }
 
           .gs-overlay {
-            padding: 18px 20px;
+            padding: 14px 16px;
           }
 
           .gs-overlay h3 {
-            font-size: 28px;
+            font-size: 24px;
           }
 
           .gs-overlay p {
@@ -353,9 +353,22 @@ export default function GurukulCarousel({ onOpenLightbox }) {
           }
 
           .gs-btn {
-            width: 40px;
-            height: 40px;
-            font-size: 28px;
+            width: 38px;
+            height: 38px;
+            font-size: 26px;
+          }
+        }
+
+        @media (max-width: 400px) {
+          .gs-card {
+            width: 220px;
+            height: 150px;
+          }
+          .gs-slider {
+            height: 210px;
+          }
+          .gs-overlay h3 {
+            font-size: 20px;
           }
         }
       `}</style>

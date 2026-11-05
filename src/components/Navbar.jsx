@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Search, X, ChevronRight, Phone, Mail, Heart } from 'lucide-react';
+import { Search, X, Phone, Mail, Heart } from 'lucide-react';
 
 const FbIcon = () => (
   <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
@@ -27,10 +27,11 @@ const YtIcon = () => (
 const NAV_LINKS = [
   { label: 'Home', href: '/', id: 'home', icon: 'fa-solid fa-house' },
   { label: 'About Us', line1: 'About', line2: 'Us', href: '/about', id: 'about', icon: 'fa-regular fa-clone' },
+  { label: 'Event', href: '/event', id: 'events', isRed: true, icon: 'fa-regular fa-calendar-days' },
+  { label: 'Volunteers', href: '#', id: 'volunteers', hasSubmenu: true, icon: 'fa-regular fa-user' },
+  { label: 'Kathas', href: '#', id: 'kathas', icon: 'fa-regular fa-book' },
   { label: 'Gallery', href: '/gallery', id: 'gallery', icon: 'fa-regular fa-image' },
-  { label: 'Events', href: '/event', id: 'events', isRed: true, icon: 'fa-regular fa-calendar-days' },
-  { label: 'Contact Us', line1: 'Contact', line2: 'Us', href: '/contact', id: 'contact', icon: 'fa-regular fa-envelope' },
-  { label: 'Blog', href: '/#blogs', id: 'blogs', icon: 'fa-regular fa-bookmark' },
+  { label: 'Pages', href: '#', id: 'pages', hasSubmenu: true, icon: 'fa-regular fa-bookmark' },
 ];
 
 const SOCIALS = [
@@ -393,17 +394,15 @@ const CSS = `
 }
 
 /* ============================================================ */
-/* 3D OFF-CANVAS MOBILE DRAWER & LAYERED PERSPECTIVE ANIMATION   */
+/* OFF-CANVAS MOBILE DRAWER                                      */
 /* ============================================================ */
 .nbov {
   position: fixed;
   inset: 0;
-  background: rgba(11, 35, 28, 0.45);
-  backdrop-filter: blur(3px);
-  -webkit-backdrop-filter: blur(3px);
+  background: rgba(0, 0, 0, 0.35);
   z-index: 99998;
   opacity: 0;
-  transition: opacity 0.35s ease;
+  transition: opacity 0.3s ease;
   pointer-events: none;
   cursor: pointer;
 }
@@ -416,264 +415,170 @@ const CSS = `
   position: fixed;
   top: 0;
   left: 0;
-  width: min(78vw, 320px);
+  width: min(80vw, 300px);
   height: 100%;
   background: #ffffff;
   z-index: 99999;
   display: flex;
   flex-direction: column;
   overflow-y: auto;
-  box-shadow: 10px 0 40px rgba(0, 0, 0, 0.18);
+  overflow-x: hidden;
+  box-shadow: 4px 0 24px rgba(0, 0, 0, 0.13);
   transform: translateX(-100%);
-  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-  padding: 0;
+  transition: transform 0.38s cubic-bezier(0.16, 1, 0.3, 1);
 }
 .nbsp.open {
   transform: translateX(0);
 }
 
-/* 3D Layered Push Animation applied to Main Content */
+/* Body lock when drawer open */
 @media (max-width: 1099px) {
   body.nb-menu-open {
     overflow: hidden !important;
-    background-color: #f7f7f7 !important;
-  }
-  .page-wrapper,
-  main#main-content {
-    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), border-radius 0.4s ease, box-shadow 0.4s ease;
-    transform-origin: left center;
-  }
-  body.nb-menu-open .page-wrapper,
-  body.nb-menu-open main#main-content {
-    transform: translateX(min(68vw, 290px)) scale(0.9) translateZ(0);
-    border-radius: 35px;
-    box-shadow: -15px 0 32px rgba(0, 0, 0, 0.14);
-    overflow: hidden;
-    cursor: pointer;
   }
 }
 
-/* Profile Header Section */
-.nbsp-profile {
+/* ---- Drawer Header: orange logo badge + X close ---- */
+.nbsp-head {
   display: flex;
   align-items: center;
-  gap: 14px;
-  padding: 30px 20px 20px 22px;
-  border-bottom: 1px solid #f1f5f9;
-  background: #fcfcfc;
-  position: relative;
-}
-.nbsp-profile img {
-  width: 58px;
-  height: 58px;
-  border-radius: 50%;
-  background-color: #e0e0e0;
-  object-fit: cover;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
-  border: 2px solid #ffffff;
+  justify-content: space-between;
+  background: #f7bd39;
+  padding: 14px 16px 14px 14px;
   flex-shrink: 0;
+  min-height: 72px;
 }
-.nbsp-profile-text {
+.nbsp-head-logo {
   display: flex;
-  flex-direction: column;
+  align-items: center;
 }
-.nbsp-profile-text h2 {
-  font-size: 18px;
-  color: #000000;
-  font-weight: 600;
-  margin: 0 0 3px 0;
-  letter-spacing: -0.01em;
-  line-height: 1.2;
+.nbsp-head-logo img {
+  max-height: 46px;
+  max-width: 160px;
+  width: auto;
+  object-fit: contain;
+  display: block;
 }
-.nbsp-profile-text p {
-  font-size: 13px;
-  color: #888888;
-  margin: 0;
-  font-weight: 500;
-}
-.nbsp-cl {
-  width: 32px;
-  height: 32px;
+.nbsp-head-close {
+  width: 36px;
+  height: 36px;
   border-radius: 50%;
-  border: 1px solid #e2e8f0;
-  background: #ffffff;
+  border: 1.5px solid rgba(255,255,255,0.55);
+  background: rgba(255,255,255,0.18);
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  color: #475569;
-  margin-left: auto;
-  transition: all 0.2s ease;
+  color: #ffffff;
   flex-shrink: 0;
+  transition: background 0.2s ease, transform 0.2s ease;
 }
-.nbsp-cl:hover {
-  background: #fee2e2;
-  color: #ef4444;
-  border-color: #fca5a5;
+.nbsp-head-close:hover {
+  background: rgba(255,255,255,0.35);
   transform: rotate(90deg);
 }
 
-/* Nav List - Pill Shaped with Line-style Icons & Active States */
+/* ---- Drawer Nav List: flat list with dividers ---- */
 .nbsp-nav {
   flex: 1;
-  padding: 16px 14px;
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  padding: 6px 0;
 }
 .nbsl {
   display: flex;
   align-items: center;
-  gap: 15px;
-  padding: 13px 20px;
-  border-radius: 30px;
-  font-size: 15px;
+  justify-content: space-between;
+  padding: 16px 22px;
+  font-size: 15.5px;
   font-weight: 500;
-  color: #333333;
+  color: #111111;
   text-decoration: none;
   border: none;
+  border-bottom: 1px solid #f0f0f0;
   cursor: pointer;
   background: transparent;
-  transition: all 0.25s ease;
+  transition: background 0.18s ease, color 0.18s ease;
   width: 100%;
   text-align: left;
   user-select: none;
+  letter-spacing: 0.01em;
 }
-.nbsl i {
-  font-size: 18px;
-  color: #333333;
-  width: 20px;
-  text-align: center;
-  flex-shrink: 0;
-  transition: transform 0.2s ease, color 0.2s ease;
+.nbsl:last-child {
+  border-bottom: none;
 }
-.nbsl:hover,
-.nbsl.act {
-  background-color: #e5e5e5;
-  color: #000000;
+.nbsl:hover {
+  background: #fef3ea;
+  color: #f97316;
 }
 .nbsl.act {
+  color: #f97316;
   font-weight: 600;
+  background: #fef3ea;
 }
-.nbsl.act i {
-  font-weight: 900;
-  color: #000000;
-  transform: scale(1.08);
+.nbsl-label {
+  flex: 1;
 }
-.nbsl-chev {
-  margin-left: auto;
-  color: #94a3b8;
+.nbsl-plus {
+  color: #aaaaaa;
+  font-size: 20px;
+  font-weight: 300;
+  line-height: 1;
   flex-shrink: 0;
-  transition: transform 0.2s ease;
-}
-.nbsl:hover .nbsl-chev,
-.nbsl.act .nbsl-chev {
-  transform: translateX(3px);
-  color: #000000;
+  margin-left: 10px;
 }
 
-/* Drawer Footer */
+/* ---- Drawer Footer ---- */
 .nbsp-ft {
-  padding: 18px 18px 24px 18px;
-  border-top: 1px solid #f1f5f9;
+  padding: 16px 20px 24px 20px;
+  border-top: 1px solid #eeeeee;
   background: #fafafa;
   flex-shrink: 0;
   display: flex;
   flex-direction: column;
-  gap: 12px;
-}
-.nbsp-actions {
-  display: flex;
-  flex-direction: column;
-  gap: 9px;
-}
-.nbsp-btn-donate {
-  width: 100%;
-  background: #e31937;
-  color: #ffffff;
-  padding: 12px;
-  border-radius: 30px;
-  font-size: 14.5px;
-  font-weight: 700;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  border: none;
-  cursor: pointer;
-  box-shadow: 0 4px 12px rgba(227, 25, 55, 0.3);
-  transition: all 0.2s ease;
-}
-.nbsp-btn-donate:hover {
-  background: #cc142f;
-  transform: translateY(-1px);
-}
-.nbsp-btn-volunteer {
-  width: 100%;
-  background: #fabc3f;
-  color: #1e293b;
-  padding: 12px;
-  border-radius: 30px;
-  font-size: 14px;
-  font-weight: 700;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  border: none;
-  cursor: pointer;
-  box-shadow: 0 4px 12px rgba(250, 188, 63, 0.25);
-  transition: all 0.2s ease;
-}
-.nbsp-btn-volunteer:hover {
-  background: #ffc44d;
-  transform: translateY(-1px);
+  gap: 10px;
 }
 .nbsp-contact {
   display: flex;
   flex-direction: column;
-  gap: 6px;
-  padding-top: 8px;
-  border-top: 1px dashed #e2e8f0;
+  gap: 5px;
   font-size: 12.5px;
-  color: #64748b;
+  color: #555555;
 }
 .nbsp-contact a {
-  color: #334155;
+  color: #333333;
   text-decoration: none;
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 7px;
   transition: color 0.2s ease;
+  font-size: 12.5px;
 }
 .nbsp-contact a:hover {
-  color: #e31937;
+  color: #f97316;
 }
 .nbsp-sl {
   display: flex;
   align-items: center;
   gap: 10px;
   justify-content: center;
-  margin-top: 2px;
+  padding-top: 4px;
 }
 .nbsp-si {
-  width: 32px;
-  height: 32px;
+  width: 34px;
+  height: 34px;
   border-radius: 50%;
-  border: 1px solid #e2e8f0;
-  background: #ffffff;
+  background: #f7bd39;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #64748b;
+  color: #ffffff;
   text-decoration: none;
-  transition: all 0.2s ease;
+  transition: opacity 0.2s ease, transform 0.2s ease;
 }
 .nbsp-si:hover {
-  background: #e31937;
-  border-color: #e31937;
-  color: #ffffff;
-  transform: translateY(-1px);
+  opacity: 0.85;
+  transform: translateY(-2px);
 }
 
 /* Media Queries */
@@ -699,6 +604,9 @@ const CSS = `
 @media (max-width: 768px) {
   .nbt {
     padding: 0 14px;
+  }
+  .nb-donate-btn {
+    display: none !important;
   }
   .nblo {
     width: 175px;
@@ -735,6 +643,39 @@ const CSS = `
   }
   .nb-spacer.active {
     height: 102px;
+  }
+}
+@media (max-width: 480px) {
+  .nblo {
+    width: 150px;
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+  .nblo img {
+    max-height: 38px;
+  }
+  .nbrg {
+    gap: 6px;
+  }
+  .nb-donate-btn {
+    padding: 8px 10px;
+    font-size: 13px;
+  }
+}
+@media (max-width: 380px) {
+  /* On very small phones, hide donate text and show only icon */
+  .nb-donate-btn span:not(.nb-heart-ico) {
+    display: none !important;
+  }
+  .nb-donate-btn {
+    padding: 8px;
+    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    justify-content: center;
+  }
+  .nblo {
+    width: 130px;
   }
 }
 `;
@@ -1015,29 +956,25 @@ export default function Navbar({ onOpenDonate, onOpenSearch, onOpenVolunteer, cu
         aria-hidden="true"
       />
 
-      {/* 3D Off-Canvas Mobile Drawer */}
+      {/* Off-Canvas Mobile Drawer */}
       <aside
         className={`nbsp ${sidebarOpen ? 'open' : ''}`}
         role="dialog"
         aria-modal="true"
         aria-label="Navigation Menu"
       >
-        {/* Profile Header Section */}
-        <div className="nbsp-profile">
-          <img
-            src="https://api.dicebear.com/7.x/notionists/svg?seed=Arafat"
-            alt="Avatar"
-            onError={(e) => {
-              e.currentTarget.src = logo;
-            }}
-          />
-          <div className="nbsp-profile-text">
-            <h2>Arafat Sany</h2>
-            <p>UX/UI Designer</p>
+        {/* Orange Logo Header with X Close */}
+        <div className="nbsp-head">
+          <div className="nbsp-head-logo">
+            <img
+              src={logo}
+              alt="Shri Abhaydas Ji Maharaj"
+              onError={(e) => { e.currentTarget.src = logoFb; }}
+            />
           </div>
           <button
             type="button"
-            className="nbsp-cl"
+            className="nbsp-head-close"
             onClick={() => setSidebarOpen(false)}
             aria-label="Close menu"
           >
@@ -1045,7 +982,7 @@ export default function Navbar({ onOpenDonate, onOpenSearch, onOpenVolunteer, cu
           </button>
         </div>
 
-        {/* Pill-Shaped Navigation Items */}
+        {/* Flat Nav List with dividers */}
         <nav className="nbsp-nav" aria-label="Mobile Navigation">
           {NAV_LINKS.map((link) => {
             const isActive = activeNav === link.id;
@@ -1056,48 +993,23 @@ export default function Navbar({ onOpenDonate, onOpenSearch, onOpenVolunteer, cu
                 className={`nbsl ${isActive ? 'act' : ''}`}
                 onClick={(e) => go(e, link.href, link.id)}
               >
-                <i className={link.icon} aria-hidden="true"></i>
-                <span>{link.label}</span>
-                <ChevronRight size={15} className="nbsl-chev" />
+                <span className="nbsl-label">{link.label}</span>
+                {link.hasSubmenu && <span className="nbsl-plus">+</span>}
               </button>
             );
           })}
         </nav>
 
-        {/* Footer Actions & Contact Details */}
+        {/* Footer: Contact + Social Icons */}
         <div className="nbsp-ft">
-          <div className="nbsp-actions">
-            <button
-              type="button"
-              className="nbsp-btn-donate"
-              onClick={() => {
-                setSidebarOpen(false);
-                if (onOpenDonate) onOpenDonate();
-              }}
-            >
-              <Heart size={16} fill="currentColor" />
-              <span>Donate Now</span>
-            </button>
-            <button
-              type="button"
-              className="nbsp-btn-volunteer"
-              onClick={() => {
-                setSidebarOpen(false);
-                if (onOpenVolunteer) onOpenVolunteer();
-              }}
-            >
-              <span>Join as Volunteer</span>
-            </button>
-          </div>
-
           <div className="nbsp-contact">
             <a href="tel:+918696298489">
-              <Phone size={13} color="#fabc3f" />
-              <span>+91 8696298489</span>
+              <Phone size={13} color="#f7bd39" />
+              <span>+91 8696298489, +919509587824</span>
             </a>
-            <a href="mailto:info@sahastfoundation.in">
-              <Mail size={13} color="#fabc3f" />
-              <span>info@sahastfoundation.in</span>
+            <a href="mailto:info@shreeabhaydas.com">
+              <Mail size={13} color="#f7bd39" />
+              <span>info@shreeabhaydas.com</span>
             </a>
           </div>
 

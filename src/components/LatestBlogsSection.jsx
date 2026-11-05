@@ -58,21 +58,6 @@ export default function LatestBlogsSection({ onSelectBlog }) {
       }}
     >
       <div className="container" style={{ position: 'relative' }}>
-        
-        {/* Right side indicator ribbon */}
-        <div 
-          style={{
-            position: 'absolute',
-            right: '-12px',
-            top: '40%',
-            width: '14px',
-            height: '38px',
-            backgroundColor: '#e31937',
-            borderRadius: '4px 0 0 4px',
-            boxShadow: '0 2px 8px rgba(227, 25, 55, 0.4)'
-          }}
-        />
-
         {/* Section Header */}
         <div style={{ textAlign: 'center', marginBottom: '45px' }}>
           <div 
@@ -115,9 +100,10 @@ export default function LatestBlogsSection({ onSelectBlog }) {
 
         {/* 3 Blog Cards */}
         <div 
+          className="blogs-grid"
           style={{
             display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(310px, 1fr))',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))',
             gap: '28px'
           }}
         >
