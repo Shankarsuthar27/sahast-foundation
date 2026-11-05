@@ -3,7 +3,7 @@ import { Calendar, ArrowRight } from 'lucide-react';
 import { useCms } from '../context/CmsContext';
 
 export default function LatestBlogsSection({ onSelectBlog }) {
-  const { homepageData } = useCms();
+  const { homepageData, newsList } = useCms();
   const blogsData = homepageData?.latestBlogs || {};
 
   const defaultBlogs = [
@@ -42,11 +42,68 @@ export default function LatestBlogsSection({ onSelectBlog }) {
     }
   ];
 
-  const rawBlogs = blogsData.blogs;
-  const parsedBlogs = Array.isArray(rawBlogs)
-    ? rawBlogs
-    : (rawBlogs && typeof rawBlogs === 'object' ? Object.values(rawBlogs) : []);
-  const blogs = parsedBlogs.length > 0 ? parsedBlogs : defaultBlogs;
+  // Map CMS news articles to live blog cards
+  const publishedArticles = (newsList || []).filter(
+    (a) => !a.status || a.status === 'published'
+  );
+
+  // Sort articles newest first
+  const sortedArticles = [...publishedArticles].sort((a, b) => {
+    const timeA = new Date(a.publishedAt || a.createdAt || 0).getTime();
+    const timeB = new Date(b.publishedAt || b.createdAt || 0).getTime();
+    return timeB - timeA;
+  });
+
+  const dynamicArticleBlogs = sortedArticles.map((article) => {
+    let formattedDate = 'Recent';
+    if (article.publishedAt || article.createdAt) {
+      try {
+        const d = new Date(article.publishedAt || article.createdAt);
+        if (!isNaN(d.getTime())) {
+          formattedDate = d.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+        }
+      } catch (_) {}
+    }
+
+    const plainExcerpt =
+      article.excerpt ||
+      (article.content
+        ? article.content.replace(/<[^>]+>/g, ' ').trim().slice(0, 150) + '...'
+        : '');
+
+    return {
+      id: article.id,
+      isArticle: true,
+      articleData: article,
+      image: article.featuredImage || '/home-page-image/gurukul.png',
+      fallback: '/home-page-image/gurukul.png',
+      badge: article.category || 'Spiritual',
+      bannerText: (article.category || 'ARTICLE').toUpperCase(),
+      title: article.title,
+      date: formattedDate,
+      excerpt: plainExcerpt,
+      author: article.author || 'Shree Abhaydas Ji Ashram'
+    };
+  });
+
+  // Combine dynamic articles first, supplemented by default blogs if less than 3
+  let combinedBlogs = [...dynamicArticleBlogs];
+  if (combinedBlogs.length === 0) {
+    const rawBlogs = blogsData.blogs;
+    const parsedBlogs = Array.isArray(rawBlogs)
+      ? rawBlogs
+      : (rawBlogs && typeof rawBlogs === 'object' ? Object.values(rawBlogs) : []);
+    combinedBlogs = parsedBlogs.length > 0 ? parsedBlogs : defaultBlogs;
+  } else if (combinedBlogs.length < 3) {
+    const existingTitles = new Set(combinedBlogs.map((b) => b.title?.toLowerCase().trim()));
+    for (const def of defaultBlogs) {
+      if (!existingTitles.has(def.title?.toLowerCase().trim()) && combinedBlogs.length < 3) {
+        combinedBlogs.push(def);
+      }
+    }
+  }
+
+  const blogs = combinedBlogs;
 
   return (
     <section 

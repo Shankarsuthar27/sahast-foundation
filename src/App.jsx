@@ -18,6 +18,8 @@ import ContactPage from './components/ContactPage';
 import BlogDetailPage from './components/BlogDetailPage';
 import MeditationBlogPage from './components/MeditationBlogPage';
 import GurukulBlogPage from './components/GurukulBlogPage';
+import ArticleDetailPage from './components/ArticleDetailPage';
+import { useCms } from './context/CmsContext';
 import AdminApp from './admin/AdminApp';
 import Footer from './components/Footer';
 import {
@@ -123,6 +125,26 @@ function parseLocation() {
     return { view: 'contact', hash: '' };
   }
 
+  // Dynamic Article / News view
+  if (
+    path.startsWith('/article/') ||
+    path.startsWith('/news/') ||
+    path.startsWith('/post/') ||
+    hash.startsWith('#article/') ||
+    hash.startsWith('#news/') ||
+    hash.startsWith('#post/')
+  ) {
+    const rawSlug = (path.startsWith('/article/')
+      ? path.replace('/article/', '')
+      : path.startsWith('/news/')
+      ? path.replace('/news/', '')
+      : path.startsWith('/post/')
+      ? path.replace('/post/', '')
+      : hash.replace(/^#(article|news|post)\//, '')
+    ).trim();
+    return { view: 'article', hash: '', articleSlug: rawSlug };
+  }
+
   // Events view
   if (
     hash === '#event' ||
@@ -159,11 +181,13 @@ function parseLocation() {
 }
 
 export default function App() {
+  const { newsList } = useCms();
   const [donateModalOpen, setDonateModalOpen] = useState(false);
   const [videoModalOpen, setVideoModalOpen] = useState(false);
   const [volunteerModalOpen, setVolunteerModalOpen] = useState(false);
   const [searchModalOpen, setSearchModalOpen] = useState(false);
   const [lightboxData, setLightboxData] = useState({ isOpen: false, image: '', title: '' });
+  const [selectedArticle, setSelectedArticle] = useState(null);
 
   const [currentView, setCurrentView] = useState(() => {
     return parseLocation().view;
@@ -174,7 +198,7 @@ export default function App() {
 
   useEffect(() => {
     const syncRouteAndCleanUrl = () => {
-      const { view, hash, subRoute } = parseLocation();
+      const { view, hash, subRoute, articleSlug } = parseLocation();
       setCurrentView(view);
       if (subRoute) setAdminSubRoute(subRoute);
 
@@ -197,6 +221,14 @@ export default function App() {
           }
           window.scrollTo({ top: 0, behavior: 'smooth' });
         }
+      } else if (view === 'article') {
+        if (articleSlug) {
+          const match = (newsList || []).find(
+            (a) => a.slug === articleSlug || a.id === articleSlug
+          );
+          if (match) setSelectedArticle(match);
+        }
+        window.scrollTo({ top: 0, behavior: 'smooth' });
       } else if (view === 'gallery') {
         if (path !== '/gallery' || rawHash) {
           window.history.replaceState({ view: 'gallery' }, '', '/gallery');
@@ -260,12 +292,21 @@ export default function App() {
       window.removeEventListener('popstate', syncRouteAndCleanUrl);
       window.removeEventListener('hashchange', syncRouteAndCleanUrl);
     };
-  }, []);
+  }, [newsList]);
 
-  const handleNavigate = (view, targetHash, targetSubRoute = 'dashboard') => {
+  const handleNavigate = (view, targetHash, targetSubRoute = 'dashboard', articleData = null) => {
     setCurrentView(view);
 
-    if (view === 'about') {
+    if (view === 'article') {
+      if (articleData) {
+        setSelectedArticle(articleData);
+        const slug = articleData.slug || articleData.id || 'post';
+        window.history.pushState({ view: 'article', articleSlug: slug }, '', `/article/${slug}`);
+      } else {
+        window.history.pushState({ view: 'article' }, '', '/article');
+      }
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } else if (view === 'about') {
       window.history.pushState({ view: 'about' }, '', '/about');
       window.scrollTo({ top: 0, behavior: 'smooth' });
     } else if (view === 'gallery' || view === 'stories' || view === 'our-stories') {
@@ -401,6 +442,14 @@ export default function App() {
             onOpenDonate={handleOpenDonate}
             onOpenVolunteer={handleOpenVolunteer}
           />
+        ) : currentView === 'article' ? (
+          /* Dynamic Article Detail Page */
+          <ArticleDetailPage
+            article={selectedArticle}
+            onNavigate={handleNavigate}
+            onOpenDonate={handleOpenDonate}
+            onOpenVolunteer={handleOpenVolunteer}
+          />
         ) : (
           /* Standard Homepage sections */
           <>
@@ -447,14 +496,18 @@ export default function App() {
             {/* Our Latest Blogs */}
             <LatestBlogsSection
               onSelectBlog={(blog) => {
-                if (blog.id === 1) {
+                if (blog.isArticle && blog.articleData) {
+                  handleNavigate('article', null, null, blog.articleData);
+                } else if (blog.id === 1) {
                   handleNavigate('blog-meditation');
                 } else if (blog.id === 2) {
                   handleNavigate('blog-gurukul');
                 } else if (blog.id === 3) {
                   handleNavigate('blog-seva');
+                } else if (blog.articleData) {
+                  handleNavigate('article', null, null, blog.articleData);
                 } else {
-                  handleNavigate('blog-gurukul');
+                  handleNavigate('article', null, null, blog);
                 }
               }}
             />

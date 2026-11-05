@@ -6,8 +6,7 @@ import {
   ArrowRight,
   ChevronLeft,
   ChevronRight,
-  Heart,
-  Sparkles
+  Heart
 } from 'lucide-react';
 import { useCms } from '../context/CmsContext';
 
@@ -88,21 +87,11 @@ export default function PillarCards({ onOpenDonate }) {
       {/* 1. MOBILE-ONLY VIEW: Modern Sliding Article Carousel      */}
       {/* ========================================================= */}
       <div className="block md:hidden">
-        {/* Header: Centered, bold section title + Option A/B switch */}
-        <div className="px-4 mb-4 flex items-center justify-between">
-          <h2 className="text-xl font-bold text-gray-900 text-left flex-1 tracking-tight">
+        {/* Header: Centered, bold section title */}
+        <div className="px-4 mb-4 text-center">
+          <h2 className="text-xl font-bold text-gray-900 tracking-tight">
             Our Core Seva
           </h2>
-          {/* Easy toggle between Option A and Option B */}
-          <button
-            type="button"
-            onClick={() => setCardOption((prev) => (prev === 'A' ? 'B' : 'A'))}
-            className="text-[11px] font-semibold text-gray-600 bg-gray-100 hover:bg-gray-200 active:bg-orange-100 active:text-orange-600 px-3 py-1 rounded-full transition-colors flex items-center gap-1.5 shadow-2xs shrink-0 cursor-pointer"
-            title="Toggle between Option A (Overlay) & Option B (Card)"
-          >
-            <Sparkles size={12} className="text-orange-500" />
-            <span>Card Style: {cardOption}</span>
-          </button>
         </div>
 
         {/* Carousel Container with Relative Controls */}

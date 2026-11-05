@@ -41,13 +41,18 @@ export default function NewsManager() {
   };
 
   const handleSaveArticle = async (payload) => {
-    if (editingArticle) {
-      await updateNews(editingArticle.id, payload);
-    } else {
-      await addNews(payload);
+    try {
+      if (editingArticle) {
+        await updateNews(editingArticle.id, payload);
+      } else {
+        await addNews(payload);
+      }
+      setEditingArticle(null);
+      setIsComposing(false);
+    } catch (err) {
+      console.error('Error saving article:', err);
+      alert('Could not save article: ' + (err?.message || err));
     }
-    setEditingArticle(null);
-    setIsComposing(false);
   };
 
   const handleDelete = async (id) => {

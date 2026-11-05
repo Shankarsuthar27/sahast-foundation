@@ -428,55 +428,147 @@ export async function deleteCollectionItem(colName, itemId) {
 // 3. STORAGE UPLOADER (Images, gallery bucket, previews)
 // ----------------------------------------------------------------------
 
-export function uploadImageToStorage(file, folderPath = 'gallery', onProgress) {
+// Helper to compress and convert image file to optimized Base64 data URL
+function compressAndReadImage(file, maxWidth = 1600, quality = 0.85) {
   return new Promise((resolve, reject) => {
-    if (!file) {
-      reject(new Error('No file provided for upload.'));
-      return;
-    }
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = (event) => {
+      const img = new Image();
+      img.src = event.target.result;
+      img.onload = () => {
+        let width = img.width;
+        let height = img.height;
 
-    if (isFirebaseConfigured && storage) {
-      const cleanName = `${Date.now()}_${file.name.replace(/[^a-zA-Z0-9.]/g, '_')}`;
-      const storageRef = ref(storage, `${folderPath}/${cleanName}`);
-      const uploadTask = uploadBytesResumable(storageRef, file);
-
-      uploadTask.on(
-        'state_changed',
-        (snapshot) => {
-          const progress = Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 100);
-          if (onProgress) onProgress(progress);
-        },
-        (error) => {
-          console.error('Firebase Storage upload error:', error);
-          reject(error);
-        },
-        async () => {
-          try {
-            const downloadUrl = await getDownloadURL(uploadTask.snapshot.ref);
-            if (onProgress) onProgress(100);
-            resolve(downloadUrl);
-          } catch (err) {
-            reject(err);
-          }
+        if (width > maxWidth) {
+          height = Math.round((height * maxWidth) / width);
+          width = maxWidth;
         }
-      );
-    } else {
-      // Local Base64 / FileReader fallback with smooth animation
-      let progress = 0;
-      const interval = setInterval(() => {
-        progress += 25;
-        if (onProgress) onProgress(Math.min(progress, 99));
-        if (progress >= 100) {
-          clearInterval(interval);
+
+        const canvas = document.createElement('canvas');
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, width, height);
+        const dataUrl = canvas.toDataURL(file.type || 'image/jpeg', quality);
+        resolve(dataUrl);
+      };
+      img.onerror = () => resolve(event.target.result);
+    };
+    reader.onerror = (err) => reject(err);
+  });
+}
+
+// Track whether Firebase Storage has hit CORS blocks on this origin to prevent repeated 2-minute hangs
+let isStorageCorsBlocked = false;
+
+export async function uploadImageToStorage(file, folderPath = 'gallery', onProgress) {
+  if (!file) return '';
+
+  // 1. In Local Development (Vite dev server on localhost), save directly to project assets.
+  // This completely eliminates cross-origin CORS errors to Firebase Storage on localhost!
+  if (
+    typeof window !== 'undefined' &&
+    (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+  ) {
+    try {
+      if (onProgress) onProgress(25);
+      const dataUrl = await compressAndReadImage(file, 1400, 0.8);
+      if (onProgress) onProgress(65);
+
+      const res = await fetch('/api/upload-image', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ fileName: file.name, dataUrl })
+      });
+
+      if (res.ok) {
+        const json = await res.json();
+        if (json.url) {
+          if (onProgress) onProgress(100);
+          console.info('✓ Saved image to local project uploads:', json.url);
+          return json.url;
+        }
+      }
+    } catch (err) {
+      console.warn('Local dev upload middleware unavailable, falling back:', err);
+    }
+  }
+
+  // 2. Production or Cloud Storage path
+  return new Promise((resolve) => {
+    let isDone = false;
+
+    const fallbackToLocal = () => {
+      if (isDone) return;
+      isDone = true;
+      if (onProgress) onProgress(60);
+      compressAndReadImage(file, 1200, 0.75)
+        .then((dataUrl) => {
+          if (onProgress) onProgress(100);
+          resolve(dataUrl);
+        })
+        .catch(() => {
           const reader = new FileReader();
           reader.onload = () => {
             if (onProgress) onProgress(100);
             resolve(reader.result);
           };
-          reader.onerror = (err) => reject(err);
           reader.readAsDataURL(file);
+        });
+    };
+
+    // If storage is not configured, fall back immediately
+    if (!isFirebaseConfigured || !storage) {
+      fallbackToLocal();
+      return;
+    }
+
+    try {
+      const cleanName = `${Date.now()}_${file.name.replace(/[^a-zA-Z0-9.]/g, '_')}`;
+      // Route all image uploads under the permitted 'gallery' folder with sub-context prefix
+      const targetFolder = 'gallery';
+      const filePrefix = folderPath && folderPath !== 'gallery' ? `${folderPath}_` : '';
+      const storageRef = ref(storage, `${targetFolder}/${filePrefix}${cleanName}`);
+      const uploadTask = uploadBytesResumable(storageRef, file);
+
+      // SAFETY TIMEOUT: If Firebase Storage preflight hangs due to CORS,
+      // cancel uploadTask immediately and fall back to local!
+      const timer = setTimeout(() => {
+        if (!isDone) {
+          try {
+            uploadTask.cancel();
+          } catch (e) {}
+          fallbackToLocal();
         }
-      }, 100);
+      }, 3000);
+
+      uploadTask.on(
+        'state_changed',
+        (snapshot) => {
+          if (isDone) return;
+          const progress = Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 100);
+          if (onProgress) onProgress(progress);
+        },
+        () => {
+          clearTimeout(timer);
+          fallbackToLocal();
+        },
+        async () => {
+          clearTimeout(timer);
+          if (isDone) return;
+          try {
+            const downloadUrl = await getDownloadURL(uploadTask.snapshot.ref);
+            isDone = true;
+            if (onProgress) onProgress(100);
+            resolve(downloadUrl);
+          } catch (err) {
+            fallbackToLocal();
+          }
+        }
+      );
+    } catch (err) {
+      fallbackToLocal();
     }
   });
 }

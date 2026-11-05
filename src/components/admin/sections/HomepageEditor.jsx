@@ -1913,7 +1913,18 @@ export default function HomepageEditor({ onViewLiveSite }) {
                       type="text"
                       value={editModal.value}
                       onChange={(e) => setEditModal({ ...editModal, value: e.target.value })}
-                      className="w-full px-3 py-2 text-xs bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:outline-none focus:border-sky-500 font-sans"
+                      onBlur={(e) => {
+                        let val = e.target.value.trim();
+                        if (val.startsWith('page-image/')) {
+                          val = '/home-page-image/' + val.replace('page-image/', '');
+                        } else if (val.startsWith('home-page-image/')) {
+                          val = '/' + val;
+                        } else if (val && !val.startsWith('/') && !val.startsWith('http://') && !val.startsWith('https://') && !val.startsWith('data:')) {
+                          val = '/' + val;
+                        }
+                        setEditModal({ ...editModal, value: val });
+                      }}
+                      className="w-full px-3 py-2 text-xs bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:outline-none focus:border-sky-500 font-sans font-mono"
                       autoFocus
                     />
                   </div>
