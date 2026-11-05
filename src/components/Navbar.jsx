@@ -31,7 +31,7 @@ const NAV_LINKS = [
   { label: 'Volunteers', href: '#', id: 'volunteers', hasSubmenu: true, icon: 'fa-regular fa-user' },
   { label: 'Kathas', href: '#', id: 'kathas', icon: 'fa-regular fa-book' },
   { label: 'Gallery', href: '/gallery', id: 'gallery', icon: 'fa-regular fa-image' },
-  { label: 'Pages', href: '#', id: 'pages', hasSubmenu: true, icon: 'fa-regular fa-bookmark' },
+  { label: 'Pages', href: '/pages', id: 'pages', hasSubmenu: true, icon: 'fa-regular fa-bookmark' },
 ];
 
 const SOCIALS = [
@@ -791,6 +791,16 @@ export default function Navbar({ onOpenDonate, onOpenSearch, onOpenVolunteer, cu
         onNavigate('contact');
       } else {
         window.history.pushState({ view: 'contact' }, '', '/contact');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+      return;
+    }
+
+    if (id === 'pages' || id === 'all-blogs' || href === '/pages' || href === '/blogs') {
+      if (onNavigate) {
+        onNavigate('pages');
+      } else {
+        window.history.pushState({ view: 'pages' }, '', '/pages');
         window.scrollTo({ top: 0, behavior: 'smooth' });
       }
       return;

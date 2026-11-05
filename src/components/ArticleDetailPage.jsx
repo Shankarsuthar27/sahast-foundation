@@ -126,7 +126,7 @@ export default function ArticleDetailPage({ article, onNavigate, onOpenDonate, o
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '28px', flexWrap: 'wrap', gap: '14px' }}>
           <button
             type="button"
-            onClick={() => onNavigate && onNavigate('home', '#blogs')}
+            onClick={() => onNavigate && onNavigate('pages')}
             style={{
               display: 'inline-flex',
               alignItems: 'center',
@@ -151,7 +151,7 @@ export default function ArticleDetailPage({ article, onNavigate, onOpenDonate, o
             }}
           >
             <ArrowLeft size={15} />
-            <span>Back to Blogs</span>
+            <span>Back to All Blogs</span>
           </button>
 
           <nav aria-label="Breadcrumb" style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '14px', color: '#64748b' }}>
@@ -168,14 +168,14 @@ export default function ArticleDetailPage({ article, onNavigate, onOpenDonate, o
             </a>
             <ChevronRight size={13} color="#94a3b8" />
             <a
-              href="/#blogs"
+              href="/pages"
               onClick={(e) => {
                 e.preventDefault();
-                if (onNavigate) onNavigate('home', '#blogs');
+                if (onNavigate) onNavigate('pages');
               }}
               style={{ color: '#64748b', textDecoration: 'none' }}
             >
-              Articles
+              Pages
             </a>
             <ChevronRight size={13} color="#94a3b8" />
             <span style={{ color: '#0f172a', fontWeight: 600 }}>{currentArticle.category || 'Discourse'}</span>
@@ -415,7 +415,7 @@ export default function ArticleDetailPage({ article, onNavigate, onOpenDonate, o
 
             <button
               type="button"
-              onClick={() => onNavigate && onNavigate('home', '#blogs')}
+              onClick={() => onNavigate && onNavigate('pages')}
               style={{
                 display: 'inline-flex',
                 alignItems: 'center',

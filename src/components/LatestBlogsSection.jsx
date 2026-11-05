@@ -2,7 +2,7 @@ import React from 'react';
 import { Calendar, ArrowRight } from 'lucide-react';
 import { useCms } from '../context/CmsContext';
 
-export default function LatestBlogsSection({ onSelectBlog }) {
+export default function LatestBlogsSection({ onSelectBlog, onNavigate }) {
   const { homepageData, newsList } = useCms();
   const blogsData = homepageData?.latestBlogs || {};
 
@@ -103,7 +103,8 @@ export default function LatestBlogsSection({ onSelectBlog }) {
     }
   }
 
-  const blogs = combinedBlogs;
+  // Ensure ONLY the latest 3 blogs are shown in this homepage section
+  const blogs = combinedBlogs.slice(0, 3);
 
   return (
     <section 
@@ -267,6 +268,40 @@ export default function LatestBlogsSection({ onSelectBlog }) {
               </div>
             </article>
           ))}
+        </div>
+
+        {/* Explore All Blogs Button linking to Pages view */}
+        <div style={{ textAlign: 'center', marginTop: '48px' }}>
+          <button
+            type="button"
+            onClick={() => onNavigate && onNavigate('pages')}
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '10px',
+              backgroundColor: '#0b231c',
+              color: '#ffffff',
+              padding: '14px 36px',
+              borderRadius: '50px',
+              fontSize: '14.5px',
+              fontWeight: 700,
+              border: 'none',
+              cursor: 'pointer',
+              boxShadow: '0 8px 24px rgba(11, 35, 28, 0.16)',
+              transition: 'all 0.25s ease'
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.backgroundColor = '#d59a1a';
+              e.currentTarget.style.transform = 'translateY(-2px)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.backgroundColor = '#0b231c';
+              e.currentTarget.style.transform = 'translateY(0)';
+            }}
+          >
+            <span>Explore All Articles & Blogs</span>
+            <ArrowRight size={16} />
+          </button>
         </div>
 
       </div>

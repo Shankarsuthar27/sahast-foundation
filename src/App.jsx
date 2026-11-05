@@ -19,6 +19,7 @@ import BlogDetailPage from './components/BlogDetailPage';
 import MeditationBlogPage from './components/MeditationBlogPage';
 import GurukulBlogPage from './components/GurukulBlogPage';
 import ArticleDetailPage from './components/ArticleDetailPage';
+import AllBlogsPage from './components/AllBlogsPage';
 import { useCms } from './context/CmsContext';
 import AdminApp from './admin/AdminApp';
 import Footer from './components/Footer';
@@ -123,6 +124,19 @@ function parseLocation() {
     path === '/contact-us'
   ) {
     return { view: 'contact', hash: '' };
+  }
+
+  // Pages / All Blogs & Articles view
+  if (
+    hash === '#pages' ||
+    hash === '#all-blogs' ||
+    hash === '#blogs-all' ||
+    path === '/pages' ||
+    path === '/blogs' ||
+    path === '/all-blogs' ||
+    path === '/articles'
+  ) {
+    return { view: 'pages', hash: '' };
   }
 
   // Dynamic Article / News view
@@ -264,6 +278,11 @@ export default function App() {
           window.history.replaceState({ view: 'blog-seva' }, '', '/the-power-of-seva');
         }
         window.scrollTo({ top: 0, behavior: 'smooth' });
+      } else if (view === 'pages') {
+        if (path !== '/pages' && path !== '/blogs') {
+          window.history.replaceState({ view: 'pages' }, '', '/pages');
+        }
+        window.scrollTo({ top: 0, behavior: 'smooth' });
       } else if (view === 'admin') {
         const targetSub = subRoute || 'dashboard';
         let base = '/admin';
@@ -326,6 +345,9 @@ export default function App() {
       window.scrollTo({ top: 0, behavior: 'smooth' });
     } else if (view === 'blog-seva' || view === 'the-power-of-seva') {
       window.history.pushState({ view: 'blog-seva' }, '', '/the-power-of-seva');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } else if (view === 'pages' || view === 'blogs' || view === 'all-blogs') {
+      window.history.pushState({ view: 'pages' }, '', '/pages');
       window.scrollTo({ top: 0, behavior: 'smooth' });
     } else if (['admin', 'admin-panel', 'cms', 'portal'].includes(view)) {
       const sub = targetSubRoute || 'dashboard';
@@ -450,6 +472,26 @@ export default function App() {
             onOpenDonate={handleOpenDonate}
             onOpenVolunteer={handleOpenVolunteer}
           />
+        ) : currentView === 'pages' ? (
+          /* All Blogs & Articles Archive Page */
+          <AllBlogsPage
+            onNavigate={handleNavigate}
+            onSelectBlog={(blog) => {
+              if (blog.isArticle && blog.articleData) {
+                handleNavigate('article', null, null, blog.articleData);
+              } else if (blog.id === 1) {
+                handleNavigate('blog-meditation');
+              } else if (blog.id === 2) {
+                handleNavigate('blog-gurukul');
+              } else if (blog.id === 3) {
+                handleNavigate('blog-seva');
+              } else if (blog.articleData) {
+                handleNavigate('article', null, null, blog.articleData);
+              } else {
+                handleNavigate('article', null, null, blog);
+              }
+            }}
+          />
         ) : (
           /* Standard Homepage sections */
           <>
@@ -495,6 +537,7 @@ export default function App() {
 
             {/* Our Latest Blogs */}
             <LatestBlogsSection
+              onNavigate={handleNavigate}
               onSelectBlog={(blog) => {
                 if (blog.isArticle && blog.articleData) {
                   handleNavigate('article', null, null, blog.articleData);

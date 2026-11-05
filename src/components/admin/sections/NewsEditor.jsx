@@ -71,9 +71,13 @@ export default function NewsEditor({ article, onSave, onCancel }) {
   const [autoSlug, setAutoSlug] = useState(!article?.slug);
   const [category, setCategory] = useState(article?.category || 'Satsang');
   const [excerpt, setExcerpt] = useState(article?.excerpt || '');
-  const [content, setContent] = useState(
-    article?.content || '<p>Write your spiritual discourse or press release here...</p>'
-  );
+  const initialContent = (
+    article?.content &&
+    article.content !== '<p>Write your spiritual discourse or press release here...</p>' &&
+    article.content !== 'Write your spiritual discourse or press release here...'
+  ) ? article.content : '';
+
+  const [content, setContent] = useState(initialContent);
   const [featuredImage, setFeaturedImage] = useState(
     normalizeImageUrl(article?.featuredImage) || '/home-page-image/WhatsApp-Image-2026-05-26-at-0-e1779814877129.jpeg'
   );
@@ -94,10 +98,10 @@ export default function NewsEditor({ article, onSave, onCancel }) {
   // Initialize contentEditable only once or when article prop changes
   useEffect(() => {
     if (contentRef.current && (!isInitializedRef.current || article)) {
-      contentRef.current.innerHTML = content;
+      contentRef.current.innerHTML = initialContent || '';
       isInitializedRef.current = true;
     }
-  }, [article]);
+  }, [article, initialContent]);
 
   // Auto-generate slug from title
   useEffect(() => {
@@ -196,7 +200,16 @@ export default function NewsEditor({ article, onSave, onCancel }) {
 
   // Sync content input without React DOM wipe
   const handleContentInput = (e) => {
-    setContent(e.currentTarget.innerHTML);
+    const html = e.currentTarget.innerHTML;
+    // Normalize empty tags produced by browsers on backspace
+    if (!html || html === '<br>' || html === '<p><br></p>' || html.trim() === '') {
+      if (e.currentTarget.innerHTML !== '') {
+        e.currentTarget.innerHTML = '';
+      }
+      setContent('');
+      return;
+    }
+    setContent(html);
   };
 
   const handleSubmit = (e) => {
@@ -206,12 +219,14 @@ export default function NewsEditor({ article, onSave, onCancel }) {
       return;
     }
 
+    const cleanContent = (!content || content === '<p><br></p>' || content === '<br>') ? '' : content;
+
     const payload = {
       title,
       slug: slug || 'article',
       category,
       excerpt,
-      content,
+      content: cleanContent,
       featuredImage: normalizeImageUrl(featuredImage),
       secondaryImages: secondaryImages.map(normalizeImageUrl),
       status,
@@ -238,6 +253,9 @@ export default function NewsEditor({ article, onSave, onCancel }) {
           color: #94a3b8;
           pointer-events: none;
           display: block;
+        }
+        .wysiwyg-area[contenteditable]:focus:empty:before {
+          color: #cbd5e1;
         }
       `}</style>
 
@@ -403,7 +421,7 @@ export default function NewsEditor({ article, onSave, onCancel }) {
                     onClick={() => {
                       setEditorMode('visual');
                       if (contentRef.current) {
-                        contentRef.current.innerHTML = content;
+                        contentRef.current.innerHTML = content || '';
                       }
                     }}
                     className={`px-2.5 py-1 rounded-md transition-colors cursor-pointer ${
