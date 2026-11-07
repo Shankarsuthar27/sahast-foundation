@@ -611,6 +611,22 @@ export const EVENTS_DEFAULT_SEED = [
     status: 'completed',
     featuredImage: '/home-page-image/WhatsApp-Image-2026-05-26-at-0-e1779814877129.jpeg',
     createdAt: '2026-09-25T08:00:00.000Z'
+  },
+  {
+    id: 'event-5',
+    title: 'Diwali & Deepotsav Seva Mahotsav',
+    slug: 'diwali-deepotsav-seva-mahotsav',
+    startDate: '2026-11-07',
+    endDate: '2026-11-14',
+    timing: '02:00 PM - 06:00 PM Daily',
+    venue: 'Sadguru Trikam Das Ji Dham',
+    location: 'Takhatgarh, Pali, Rajasthan',
+    googleMapsUrl: 'https://maps.google.com/?q=Takhatgarh,Rajasthan',
+    organizerContact: 'Shri Guru Puram Trust (+91 8696298489)',
+    liveStreamUrl: 'https://youtube.com/live/shreeabhaydas',
+    status: 'upcoming',
+    featuredImage: '/home-page-image/WhatsApp-Image-2026-05-26-at-21.23.386-e1780038882424.jpeg',
+    createdAt: '2026-10-25T08:00:00.000Z'
   }
 ];
 

@@ -12,35 +12,87 @@ export default function EventsPage({ onNavigate, onOpenDonate, onOpenVolunteer }
   const defaultEvents = [
     {
       id: 1,
-      title: '7-Day Shrimad Bhagwat Mahapuran Gyan Yagna',
-      date: 'November 01 - 07, 2026',
+      title: '7-Day Shrimad Bhagwat Gyan Yagna Mahotsav',
+      date: '2026-11-01 — 2026-11-07',
       time: '02:00 PM - 06:00 PM Daily',
-      location: 'Sadguru Trikam Das Ji Dham, Takhatgarh, Pali (Rajasthan)',
-      description: 'Divine spiritual discourse and pravachan under the benign presence of Pujya Swami Shri Abhay Das Ji Maharaj, followed by daily Maha Prasad Bhandara.',
-      badge: 'Spiritual Discourse',
-      badgeColor: '#e31937'
+      location: 'Sadguru Trikam Das Ji Dham • Takhatgarh, Pali, Rajasthan',
+      description: 'Organized by: Shri Guru Puram Trust (+91 8696298489)',
+      badge: 'Spiritual Yatra',
+      badgeColor: '#0f382c',
+      featuredImage: '/home-page-image/WhatsApp-Image-2026-05-28-at-13.31.06-e1779955352658.jpeg'
     },
     {
       id: 2,
       title: 'Gau Seva Mahasammelan & Vedic Havan',
-      date: 'November 18 - 19, 2026',
+      date: '2026-11-18 — 2026-11-19',
       time: '08:00 AM - 01:00 PM',
-      location: 'Shri Guru Puram Gaushala Complex, Takhatgarh, Pali',
-      description: 'Massive cow protection gathering, veterinary healthcare camp, and Vedic havan for global peace and environmental harmony.',
-      badge: 'Gau Seva',
-      badgeColor: '#0b231c'
+      location: 'Shri Guru Puram Gaushala Complex • Takhatgarh, Pali, Rajasthan',
+      description: 'Organized by: Ashram Seva Samiti (+91 8696298489)',
+      badge: 'Spiritual Yatra',
+      badgeColor: '#0f382c',
+      featuredImage: '/home-page-image/WhatsApp-Image-2026-05-26-at-21.23.523-e1779814853502.jpeg'
     },
     {
       id: 3,
       title: 'Youth Meditation & Character Building Camp',
-      date: 'December 12 - 15, 2026',
+      date: '2026-10-18 — 2026-10-21',
       time: '06:00 AM - 08:30 PM Daily',
-      location: 'Dhyana Mandapam, Ashram Campus, Takhatgarh, Pali',
-      description: 'Value-based character empowerment, Dhyana techniques, and Vedic chanting for rural and tribal youth.',
-      badge: 'Youth Satsang',
-      badgeColor: '#fabc3f'
+      location: 'Dhyana Mandapam, Ashram Campus • Takhatgarh, Pali, Rajasthan',
+      description: 'Organized by: Vedic Gurukul Faculty (+91 8696298489)',
+      badge: 'Ongoing Live',
+      badgeColor: '#ea580c',
+      featuredImage: '/home-page-image/meditation-1-e1780126777484.png'
+    },
+    {
+      id: 4,
+      title: 'Sharad Purnima Mahotsav & Ras Utsav',
+      date: '2026-10-10 — 2026-10-11',
+      time: '07:00 PM - 11:30 PM',
+      location: 'Main Temple Courtyard • Takhatgarh, Pali, Rajasthan',
+      description: 'Organized by: Pujya Maharaj Ji Seva Mandal (+91 8696298489)',
+      badge: 'Spiritual Yatra',
+      badgeColor: '#0f382c',
+      featuredImage: '/home-page-image/WhatsApp-Image-2026-05-26-at-0-e1779814877129.jpeg'
+    },
+    {
+      id: 5,
+      title: 'diwali',
+      date: '2026-11-07 — 2026-11-14',
+      time: '02:00 PM - 06:00 PM Daily',
+      location: 'Sadguru Trikam Das Ji Dham • Takhatgarh, Pali, Rajasthan',
+      description: 'Organized by: Shri Guru Puram Trust (+91 8696298489)',
+      badge: 'Spiritual Yatra',
+      badgeColor: '#0f382c',
+      featuredImage: '/home-page-image/WhatsApp-Image-2026-05-26-at-21.23.386-e1780038882424.jpeg'
     }
   ];
+
+  const getFallbackImage = (title = '', idx = 0) => {
+    const t = (title || '').toLowerCase();
+    if (t.includes('bhagwat') || t.includes('yagna') || t.includes('katha') || t.includes('gyan')) {
+      return '/home-page-image/WhatsApp-Image-2026-05-28-at-13.31.06-e1779955352658.jpeg';
+    }
+    if (t.includes('gau') || t.includes('cow') || t.includes('havan')) {
+      return '/home-page-image/WhatsApp-Image-2026-05-26-at-21.23.523-e1779814853502.jpeg';
+    }
+    if (t.includes('meditation') || t.includes('dhyan') || t.includes('youth') || t.includes('gurukul')) {
+      return '/home-page-image/meditation-1-e1780126777484.png';
+    }
+    if (t.includes('sharad') || t.includes('purnima') || t.includes('ras') || t.includes('utsav')) {
+      return '/home-page-image/WhatsApp-Image-2026-05-26-at-0-e1779814877129.jpeg';
+    }
+    if (t.includes('diwali') || t.includes('deepotsav')) {
+      return '/home-page-image/WhatsApp-Image-2026-05-26-at-21.23.386-e1780038882424.jpeg';
+    }
+    const fallbacks = [
+      '/home-page-image/WhatsApp-Image-2026-05-28-at-13.31.06-e1779955352658.jpeg',
+      '/home-page-image/WhatsApp-Image-2026-05-26-at-21.23.523-e1779814853502.jpeg',
+      '/home-page-image/meditation-1-e1780126777484.png',
+      '/home-page-image/WhatsApp-Image-2026-05-26-at-0-e1779814877129.jpeg',
+      '/home-page-image/WhatsApp-Image-2026-05-26-at-21.23.386-e1780038882424.jpeg'
+    ];
+    return fallbacks[idx % fallbacks.length];
+  };
 
   const upcomingEvents = eventsList && eventsList.length > 0
     ? eventsList.map((e, idx) => ({
@@ -52,7 +104,8 @@ export default function EventsPage({ onNavigate, onOpenDonate, onOpenVolunteer }
         description: e.organizerContact ? `Organized by: ${e.organizerContact}` : 'Divine spiritual discourse and satsang program under Pujya Maharaj Ji.',
         badge: e.status === 'ongoing' ? 'Ongoing Live' : 'Spiritual Yatra',
         badgeColor: e.status === 'ongoing' ? '#ea580c' : '#0f382c',
-        liveStreamUrl: e.liveStreamUrl
+        liveStreamUrl: e.liveStreamUrl,
+        featuredImage: e.featuredImage || getFallbackImage(e.title, idx)
       }))
     : defaultEvents;
 
@@ -126,14 +179,56 @@ export default function EventsPage({ onNavigate, onOpenDonate, onOpenVolunteer }
         }
         .events-card {
           border: 1px solid #edf2f7;
-          border-radius: 14px;
+          border-radius: 18px;
           background: #ffffff;
           box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
-          transition: transform 0.25s ease, box-shadow 0.25s ease;
+          transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+          overflow: hidden;
+          display: flex;
+          flex-direction: column;
         }
         .events-card:hover {
-          transform: translateY(-4px);
-          box-shadow: 0 12px 30px rgba(0, 0, 0, 0.09);
+          transform: translateY(-6px);
+          box-shadow: 0 16px 36px rgba(11, 35, 28, 0.12);
+        }
+        .events-card-img-box {
+          position: relative;
+          width: 100%;
+          aspect-ratio: 16 / 10;
+          overflow: hidden;
+          background-color: #f1f5f9;
+        }
+        .events-card-img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          display: block;
+          transition: transform 0.5s ease;
+        }
+        .events-card:hover .events-card-img {
+          transform: scale(1.06);
+        }
+        .events-card-badge {
+          position: absolute;
+          top: 14px;
+          left: 14px;
+          display: inline-flex;
+          align-items: center;
+          gap: 6px;
+          padding: 6px 14px;
+          border-radius: 50px;
+          font-size: 11.5px;
+          font-weight: 700;
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+          z-index: 2;
+        }
+        .events-card-body {
+          padding: 24px 24px 26px;
+          display: flex;
+          flex-direction: column;
+          flex: 1;
         }
       `}</style>
 
@@ -247,139 +342,182 @@ export default function EventsPage({ onNavigate, onOpenDonate, onOpenVolunteer }
             }}
           >
             {upcomingEvents.map((evt) => (
-              <div
-                key={evt.id}
-                className="events-card"
-                style={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  padding: '30px',
-                  borderTop: `4px solid ${evt.badgeColor}`
-                }}
-              >
-                <div style={{ marginBottom: '14px' }}>
-                  <span
+              <div key={evt.id} className="events-card">
+                {/* Event Image Banner with floating Badge */}
+                <div className="events-card-img-box">
+                  <img
+                    src={evt.featuredImage || '/home-page-image/WhatsApp-Image-2026-05-28-at-13.31.06-e1779955352658.jpeg'}
+                    alt={evt.title}
+                    className="events-card-img"
+                    onError={(e) => {
+                      e.currentTarget.src = '/home-page-image/WhatsApp-Image-2026-05-28-at-13.31.06-e1779955352658.jpeg';
+                    }}
+                  />
+                  <div
                     style={{
-                      display: 'inline-block',
-                      backgroundColor: evt.badge === 'Gurukulam Celebration' ? '#fff8e6' : evt.badge === 'Health Seva' ? '#ecfdf5' : '#fff1f2',
-                      color: evt.badgeColor === '#fabc3f' ? '#b45309' : evt.badgeColor,
-                      fontSize: '12.5px',
+                      position: 'absolute',
+                      inset: 0,
+                      background: 'linear-gradient(180deg, rgba(0,0,0,0.18) 0%, rgba(0,0,0,0) 45%, rgba(0,0,0,0.45) 100%)',
+                      pointerEvents: 'none'
+                    }}
+                  />
+                  <div
+                    className="events-card-badge"
+                    style={{
+                      backgroundColor: evt.badge === 'Ongoing Live' ? '#ea580c' : '#0f382c',
+                      color: '#ffffff'
+                    }}
+                  >
+                    {evt.badge === 'Ongoing Live' && (
+                      <span
+                        style={{
+                          width: '7px',
+                          height: '7px',
+                          borderRadius: '50%',
+                          backgroundColor: '#ffffff',
+                          display: 'inline-block'
+                        }}
+                      />
+                    )}
+                    <span>{evt.badge}</span>
+                  </div>
+
+                  {evt.liveStreamUrl && (
+                    <a
+                      href={evt.liveStreamUrl}
+                      target="_blank"
+                      rel="noreferrer"
+                      style={{
+                        position: 'absolute',
+                        top: '14px',
+                        right: '14px',
+                        backgroundColor: '#e31937',
+                        color: '#ffffff',
+                        padding: '5px 12px',
+                        borderRadius: '50px',
+                        fontSize: '11px',
+                        fontWeight: 700,
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '5px',
+                        textDecoration: 'none',
+                        boxShadow: '0 4px 12px rgba(227, 25, 55, 0.35)',
+                        zIndex: 2
+                      }}
+                    >
+                      <span>Watch Live</span>
+                    </a>
+                  )}
+                </div>
+
+                {/* Event Card Content */}
+                <div className="events-card-body">
+                  <h3
+                    style={{
+                      fontSize: '20px',
                       fontWeight: 700,
-                      textTransform: 'uppercase',
-                      letterSpacing: '0.5px',
-                      padding: '5px 12px',
-                      borderRadius: '50px'
+                      color: '#0b231c',
+                      lineHeight: '28px',
+                      marginBottom: '12px',
+                      fontFamily: '"PT Sans", serif'
                     }}
                   >
-                    {evt.badge}
-                  </span>
-                </div>
+                    {evt.title}
+                  </h3>
 
-                <h3
-                  style={{
-                    fontSize: '20px',
-                    fontWeight: 700,
-                    color: '#0b231c',
-                    lineHeight: '28px',
-                    marginBottom: '14px',
-                    fontFamily: '"PT Sans", serif'
-                  }}
-                >
-                  {evt.title}
-                </h3>
-
-                <p
-                  style={{
-                    fontSize: '14.5px',
-                    lineHeight: '24px',
-                    color: '#64748b',
-                    marginBottom: '20px',
-                    flex: 1
-                  }}
-                >
-                  {evt.description}
-                </p>
-
-                <div
-                  style={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    gap: '10px',
-                    paddingTop: '16px',
-                    borderTop: '1px solid #f1f5f9',
-                    fontSize: '13.5px',
-                    color: '#475569',
-                    marginBottom: '22px'
-                  }}
-                >
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <Calendar size={15} color="#e31937" style={{ flexShrink: 0 }} />
-                    <strong style={{ color: '#1e293b' }}>Date:</strong> {evt.date}
-                  </div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <Clock size={15} color="#fabc3f" style={{ flexShrink: 0 }} />
-                    <strong style={{ color: '#1e293b' }}>Time:</strong> {evt.time}
-                  </div>
-                  <div style={{ display: 'flex', alignItems: 'flex-start', gap: '8px' }}>
-                    <MapPin size={15} color="#0b231c" style={{ flexShrink: 0, marginTop: '2px' }} />
-                    <span><strong style={{ color: '#1e293b' }}>Location:</strong> {evt.location}</span>
-                  </div>
-                </div>
-
-                <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
-                  <button
-                    type="button"
-                    onClick={onOpenVolunteer}
+                  <p
                     style={{
-                      flex: 1,
-                      minWidth: '140px',
-                      padding: '10px 16px',
-                      backgroundColor: '#0b231c',
-                      color: '#ffffff',
-                      border: 'none',
-                      borderRadius: '8px',
-                      fontWeight: 600,
-                      fontSize: '13.5px',
-                      cursor: 'pointer',
-                      display: 'inline-flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      gap: '6px',
-                      transition: 'background-color 0.2s'
+                      fontSize: '14.5px',
+                      lineHeight: '23px',
+                      color: '#64748b',
+                      marginBottom: '18px',
+                      flex: 1
                     }}
-                    onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#153c30')}
-                    onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#0b231c')}
                   >
-                    <UserCheck size={15} />
-                    <span>Volunteer</span>
-                  </button>
+                    {evt.description}
+                  </p>
 
-                  <button
-                    type="button"
-                    onClick={onOpenDonate}
+                  <div
                     style={{
-                      flex: 1,
-                      minWidth: '140px',
-                      padding: '10px 16px',
-                      backgroundColor: '#e31937',
-                      color: '#ffffff',
-                      border: 'none',
-                      borderRadius: '8px',
-                      fontWeight: 600,
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: '9px',
+                      paddingTop: '16px',
+                      borderTop: '1px solid #f1f5f9',
                       fontSize: '13.5px',
-                      cursor: 'pointer',
-                      display: 'inline-flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      gap: '6px',
-                      transition: 'background-color 0.2s'
+                      color: '#475569',
+                      marginBottom: '22px'
                     }}
-                    onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#cc142f')}
-                    onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#e31937')}
                   >
-                    <Heart size={15} fill="currentColor" />
-                    <span>Support</span>
-                  </button>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <Calendar size={15} color="#e31937" style={{ flexShrink: 0 }} />
+                      <div><strong style={{ color: '#1e293b' }}>Date:</strong> {evt.date}</div>
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <Clock size={15} color="#fabc3f" style={{ flexShrink: 0 }} />
+                      <div><strong style={{ color: '#1e293b' }}>Time:</strong> {evt.time}</div>
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'flex-start', gap: '8px' }}>
+                      <MapPin size={15} color="#0b231c" style={{ flexShrink: 0, marginTop: '2px' }} />
+                      <span><strong style={{ color: '#1e293b' }}>Location:</strong> {evt.location}</span>
+                    </div>
+                  </div>
+
+                  <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+                    <button
+                      type="button"
+                      onClick={onOpenVolunteer}
+                      style={{
+                        flex: 1,
+                        minWidth: '130px',
+                        padding: '10px 16px',
+                        backgroundColor: '#0b231c',
+                        color: '#ffffff',
+                        border: 'none',
+                        borderRadius: '8px',
+                        fontWeight: 600,
+                        fontSize: '13.5px',
+                        cursor: 'pointer',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: '6px',
+                        transition: 'background-color 0.2s'
+                      }}
+                      onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#153c30')}
+                      onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#0b231c')}
+                    >
+                      <UserCheck size={15} />
+                      <span>Volunteer</span>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={onOpenDonate}
+                      style={{
+                        flex: 1,
+                        minWidth: '130px',
+                        padding: '10px 16px',
+                        backgroundColor: '#e31937',
+                        color: '#ffffff',
+                        border: 'none',
+                        borderRadius: '8px',
+                        fontWeight: 600,
+                        fontSize: '13.5px',
+                        cursor: 'pointer',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: '6px',
+                        transition: 'background-color 0.2s'
+                      }}
+                      onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#cc142f')}
+                      onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#e31937')}
+                    >
+                      <Heart size={15} fill="currentColor" />
+                      <span>Support</span>
+                    </button>
+                  </div>
                 </div>
               </div>
             ))}
