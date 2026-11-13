@@ -22,6 +22,17 @@
   RewriteRule ^\.well-known/ - [L]
 
   # ----------------------------------------------------------------------------
+  # 2b. Direct Static Asset Access: Never rewrite physical existing files
+  # (Crucial: prevents images inside /gallery/, /gallery-images/, /assets/ from being rewritten to index.html)
+  # ----------------------------------------------------------------------------
+  RewriteCond %{REQUEST_FILENAME} -f
+  RewriteRule ^ - [L]
+
+  # Allow direct access to common image and media extensions
+  RewriteCond %{REQUEST_FILENAME} -f
+  RewriteRule \.(?:jpg|jpeg|png|gif|webp|svg|ico|css|js|mjs|woff|woff2|ttf|eot|json)$ - [L]
+
+  # ----------------------------------------------------------------------------
   # 3. Explicit Admin & Sensitive Route Rewrites (Bypasses directory conflict)
   # ----------------------------------------------------------------------------
   RewriteRule ^admin/?$ /index.html [L,QSA]
@@ -36,10 +47,10 @@
   RewriteRule ^wp-admin/.*$ /index.html [L,QSA]
 
   # ----------------------------------------------------------------------------
-  # 4. Explicit Public Route Rewrites
+  # 4. Explicit Public Route Rewrites (SPA Routes)
+  # NOTE: Do NOT use ^gallery/.*$ as it intercepts images located in /gallery/
   # ----------------------------------------------------------------------------
   RewriteRule ^gallery/?$ /index.html [L,QSA]
-  RewriteRule ^gallery/.*$ /index.html [L,QSA]
   RewriteRule ^about/?$ /index.html [L,QSA]
   RewriteRule ^about/.*$ /index.html [L,QSA]
   RewriteRule ^contact/?$ /index.html [L,QSA]
@@ -52,6 +63,9 @@
   RewriteRule ^stories/.*$ /index.html [L,QSA]
   RewriteRule ^blog/?$ /index.html [L,QSA]
   RewriteRule ^blog/.*$ /index.html [L,QSA]
+  RewriteRule ^pages/?$ /index.html [L,QSA]
+  RewriteRule ^pages/.*$ /index.html [L,QSA]
+  RewriteRule ^article/.*$ /index.html [L,QSA]
 
   # ----------------------------------------------------------------------------
   # 5. SPA Fallback: Serve Existing Files Directly, Rewrite Others to index.html

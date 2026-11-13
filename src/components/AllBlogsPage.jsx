@@ -147,7 +147,7 @@ export default function AllBlogsPage({ onNavigate, onSelectBlog }) {
 
         .ab-hero-banner {
           position: relative;
-          background: linear-gradient(135deg, rgba(8, 20, 50, 0.92) 0%, rgba(12, 28, 68, 0.88) 100%), url(/gallery/breadcrumb-03.jpg);
+          background: linear-gradient(135deg, rgba(8, 20, 50, 0.92) 0%, rgba(12, 28, 68, 0.88) 100%), url(/images/breadcrumb-03.jpg);
           background-size: cover;
           background-position: center;
           padding: 95px 0 85px;

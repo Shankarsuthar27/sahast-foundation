@@ -3,6 +3,17 @@ import { Home, ChevronRight, X, ChevronLeft, Eye } from 'lucide-react';
 import galleryData from '../galleryItems.json';
 import { useCms } from '../context/CmsContext';
 
+const GALLERY_FALLBACKS = [
+  '/home-page-image/WhatsApp-Image-2026-05-28-at-13.31.06-e1779955352658.jpeg',
+  '/home-page-image/WhatsApp-Image-2026-05-26-at-21.23.523-e1779814853502.jpeg',
+  '/home-page-image/gurukul.png',
+  '/home-page-image/The-Power-of-Seva-Serving-Humanity-with-Compassion.png',
+  '/home-page-image/WhatsApp-Image-2026-05-26-at-21.24.09.jpeg',
+  '/home-page-image/WhatsApp-Image-2026-06-03-at-15.00.05s-e1780480281696.jpeg',
+  '/home-page-image/WhatsApp-Image-2026-05-28-at-16.39.02ad.jpeg',
+  '/home-page-image/guruji-1.jpeg'
+];
+
 export default function GalleryPage({ onNavigate, onOpenLightbox }) {
   const { galleryList } = useCms();
   const [selectedIdx, setSelectedIdx] = useState(null);
@@ -16,6 +27,26 @@ export default function GalleryPage({ onNavigate, onOpenLightbox }) {
     alt: p.title
   }));
   const allGalleryItems = [...dynamicPhotos, ...galleryData];
+
+  const handleImageError = (e, item, idx) => {
+    const currentSrc = e.currentTarget.src || '';
+    if (currentSrc.includes('/gallery-images/')) {
+      e.currentTarget.src = currentSrc.replace('/gallery-images/', '/gallery/');
+      return;
+    }
+    if (currentSrc.includes('/gallery/') && !currentSrc.includes('/gallery-images/')) {
+      e.currentTarget.src = currentSrc.replace('/gallery/', '/gallery-images/');
+      return;
+    }
+    if (item && item.remoteUrl && currentSrc !== item.remoteUrl) {
+      e.currentTarget.src = item.remoteUrl;
+      return;
+    }
+    const fallbackSrc = GALLERY_FALLBACKS[(idx || 0) % GALLERY_FALLBACKS.length];
+    if (currentSrc !== fallbackSrc) {
+      e.currentTarget.src = fallbackSrc;
+    }
+  };
 
   // Keyboard navigation for Lightbox
   useEffect(() => {
@@ -48,7 +79,7 @@ export default function GalleryPage({ onNavigate, onOpenLightbox }) {
         style={{
           position: 'relative',
           padding: '85px 0 80px',
-          backgroundImage: `linear-gradient(rgba(7, 18, 43, 0.88), rgba(7, 18, 43, 0.90)), url(/gallery/breadcrumb-03.jpg)`,
+          backgroundImage: `linear-gradient(rgba(7, 18, 43, 0.88), rgba(7, 18, 43, 0.90)), url(/gallery-images/breadcrumb-03.jpg)`,
           backgroundSize: 'cover',
           backgroundPosition: 'center',
           color: '#ffffff',
@@ -161,13 +192,7 @@ export default function GalleryPage({ onNavigate, onOpenLightbox }) {
                         src={item.image}
                         alt={item.title}
                         loading="lazy"
-                        onError={(e) => {
-                          if (item.remoteUrl && e.currentTarget.src !== item.remoteUrl) {
-                            e.currentTarget.src = item.remoteUrl;
-                          } else {
-                            e.currentTarget.src = '/home-page-image/guruji-1.jpeg';
-                          }
-                        }}
+                        onError={(e) => handleImageError(e, item, item.originalIndex)}
                       />
                       <div className="gallery-overlay">
                         <div className="gallery-overlay-icon">
@@ -201,7 +226,7 @@ export default function GalleryPage({ onNavigate, onOpenLightbox }) {
             {/* Top Toolbar */}
             <div className="gallery-lightbox-topbar">
               <span className="gallery-lightbox-counter">
-                Photo {selectedIdx + 1} of {galleryData.length}
+                Photo {selectedIdx + 1} of {allGalleryItems.length}
               </span>
               <button
                 type="button"
@@ -221,7 +246,7 @@ export default function GalleryPage({ onNavigate, onOpenLightbox }) {
                 className="gallery-lightbox-nav prev"
                 onClick={(e) => {
                   e.stopPropagation();
-                  setSelectedIdx((prev) => (prev - 1 + galleryData.length) % galleryData.length);
+                  setSelectedIdx((prev) => (prev - 1 + allGalleryItems.length) % allGalleryItems.length);
                 }}
                 aria-label="Previous Photo"
               >
@@ -232,11 +257,7 @@ export default function GalleryPage({ onNavigate, onOpenLightbox }) {
                 src={activeItem.image}
                 alt={activeItem.title}
                 className="gallery-lightbox-img"
-                onError={(e) => {
-                  if (activeItem.remoteUrl) {
-                    e.currentTarget.src = activeItem.remoteUrl;
-                  }
-                }}
+                onError={(e) => handleImageError(e, activeItem, selectedIdx)}
               />
 
               {/* Next Button */}
@@ -245,7 +266,7 @@ export default function GalleryPage({ onNavigate, onOpenLightbox }) {
                 className="gallery-lightbox-nav next"
                 onClick={(e) => {
                   e.stopPropagation();
-                  setSelectedIdx((prev) => (prev + 1) % galleryData.length);
+                  setSelectedIdx((prev) => (prev + 1) % allGalleryItems.length);
                 }}
                 aria-label="Next Photo"
               >
