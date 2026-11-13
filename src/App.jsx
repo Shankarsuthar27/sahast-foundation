@@ -429,7 +429,6 @@ export default function App() {
           /* Full Our Stories / Gallery Page matching reference screenshot */
           <GalleryPage
             onNavigate={handleNavigate}
-            onOpenLightbox={handleOpenLightbox}
           />
         ) : currentView === 'events' ? (
           /* Full Our Events Page matching reference screenshot */

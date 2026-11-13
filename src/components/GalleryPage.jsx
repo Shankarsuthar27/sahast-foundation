@@ -14,7 +14,7 @@ const GALLERY_FALLBACKS = [
   '/home-page-image/guruji-1.jpeg'
 ];
 
-export default function GalleryPage({ onNavigate, onOpenLightbox }) {
+export default function GalleryPage({ onNavigate }) {
   const { galleryList } = useCms();
   const [selectedIdx, setSelectedIdx] = useState(null);
 
@@ -173,9 +173,6 @@ export default function GalleryPage({ onNavigate, onOpenLightbox }) {
                     key={item.id}
                     className="gallery-card"
                     onClick={() => {
-                      if (onOpenLightbox) {
-                        onOpenLightbox(item.image, item.title);
-                      }
                       setSelectedIdx(item.originalIndex);
                     }}
                     role="button"
